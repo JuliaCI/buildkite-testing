@@ -1,0 +1,16 @@
+# Only run on agents that are using sandbox.jl
+agents:
+  queue: "testing"
+  sandbox.jl: "true"
+
+# NOTE: This `pipeline.yml` file would be saved in the WebUI
+steps:
+  # In the WebUI, the `cryptic` launch job _must_ be the first job to run
+  - label: ":rocket: launch pipelines"
+    plugins:
+      - staticfloat/cryptic:
+          files:
+            - ".buildkite/secrets/codesign_key.txt"
+    commands: |
+      echo "unlocked codesign_key.txt:"
+      cat .buildkite/secrets/codesign_key.txt
