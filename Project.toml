@@ -1,0 +1,21 @@
+name = "BuildkiteTestingProject"
+uuid = "9307e30f-c43e-9ca7-d17c-c2dc59df0000"
+version = "1.0.0"
+
+[deps]
+LazyArtifacts = "4af54fe1-eca0-43a8-85a7-787d91b784e3"
+Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+Preferences = "21216c6a-2e73-6563-6e65-726566657250"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+Scratch = "6c6a2e73-6563-6170-7368-637461726353"
+TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+Tar = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+UserNSSandbox_jll = "b88861f7-1d72-59dd-91e7-a8cc876a4984"
+
+[compat]
+Preferences = "1.2.1"
+Scratch = "1"
+UserNSSandbox_jll = "2021.4.22"
+julia = "1.6"

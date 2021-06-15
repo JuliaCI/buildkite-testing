@@ -3,14 +3,22 @@ agents:
   queue: "testing"
   sandbox.jl: "true"
 
-# NOTE: This `pipeline.yml` file would be saved in the WebUI
 steps:
-  # In the WebUI, the `cryptic` launch job _must_ be the first job to run
-  - label: ":rocket: launch pipelines"
+  # Let's launch a job within a sandbox!
+  - label: "run code within a sandbox"
     plugins:
-      - staticfloat/cryptic:
-          files:
-            - ".buildkite/secrets/codesign_key.txt"
-    commands: |
-      echo "unlocked codesign_key.txt:"
-      cat .buildkite/secrets/codesign_key.txt
+      # Install Julia v1.6 to run Sandbox.jl
+      - JuliaCI/julia#v1:
+          version: 1.6
+      - staticfloat/sandbox#0db08d60c5c92d0f010bb5f27acaeccf4e8b589b:
+          rootfs_url: "https://github.com/staticfloat/Sandbox.jl/releases/download/julia-python3-77eae3ba/julia-python3.tar.gz"
+          rootfs_treehash: "c0f2c53b857189e1c8378bd37c3b620ea4843e07"
+          workspaces:
+            # Include `/cache` so that `julia` install can properly cache its Julia downloads
+            - "/cache:/cache"
+      # Once inside the sandbox, install a different version of Julia to prove that we can!
+      - JuliaCI/julia#v1:
+          version: 1.5
+          update_registry: false
+      # Run tests
+      - JuliaCI/julia-test#a2455d0e8c5b56cdde8af0fe90f9d1f8a3512f5b: ~

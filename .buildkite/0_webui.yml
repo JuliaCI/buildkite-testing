@@ -1,0 +1,21 @@
+# Only run on agents that are using sandbox.jl
+agents:
+  queue: "testing"
+  sandbox.jl: "true"
+
+# NOTE: This `0_webui.yml` file is saved in the WebUI, reproduced here only for illustrative purposes
+steps:
+  # In the WebUI, the `cryptic` launch job _must_ be the first job to run
+  - label: ":unlocked: demonstrate secrets"
+    plugins:
+      - staticfloat/cryptic:
+          files:
+            - ".buildkite/secrets/codesign_key.txt"
+    commands: |
+      # Show that we can print out unencrypted secrets
+      echo -n "unlocked codesign_key.txt: "
+      cat .buildkite/secrets/codesign_key.txt
+
+  # Launch another pipeline that we don't have to manage within the WebUI (but that doesn't have access to secrets)
+  - label: ":rocket: launch pipeline"
+    commands: buildkite-agent pipeline upload
