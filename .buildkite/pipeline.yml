@@ -16,9 +16,6 @@ steps:
           workspaces:
             # Include `/cache` so that `julia` install can properly cache its Julia downloads
             - "/cache:/cache"
-      # Once inside the sandbox, install a different version of Julia to prove that we can!
-      - JuliaCI/julia#v1:
-          version: 1.5
-          update_registry: false
-      # Run tests
-      - JuliaCI/julia-test#v1: ~
+    commands: |
+      # Make giant file to ensure that we can write out to our workspaces with impunity
+      dd if=/dev/zero of=big_fatty bs=1M count=2048
