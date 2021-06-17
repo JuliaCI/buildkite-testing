@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "Wrapper invoked!" >&2
+
+/bin/bash "$@"
