@@ -22,3 +22,5 @@ steps:
           update_registry: false
       # Run tests
       - JuliaCI/julia-test#v1: ~
+    commands: |
+      set
