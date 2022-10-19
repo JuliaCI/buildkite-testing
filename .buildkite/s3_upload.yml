@@ -1,0 +1,41 @@
+steps:
+  - label: ":s3: upload to cross-job location"
+    key: s3-uploader
+    plugins:
+      - staticfloat/cryptic#v2:
+          variables:
+            - AWS_ACCESS_KEY_ID="U2FsdGVkX18iI1+sKDRwUmGLky2FW8pJmTB4r86lq+rgP/0llR1+cauOVZJh8jDV"
+            - AWS_SECRET_ACCESS_KEY="U2FsdGVkX1/2THgYnSPI7gX3xkQse/GxslI7yhdJKrcHDImsXrTjIdg6Xgoq3OjMhEDtjg+SbH+BwGiSGh2OfQ=="
+    commands: |
+      echo "$$(date)" > date.txt
+      buildkite-agent artifact upload date.txt
+    env:
+      BUILDKITE_ARTIFACT_UPLOAD_DESTINATION: "s3://julialang-s3-tests/buildkite-testing/shared_s3_location"
+      BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET: ${BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET?}
+    agents:
+      queue: "juliaecosystem"
+      os: "linux"
+
+  - label: ":s3: read from cross-job location"
+    depends_on:
+      - "s3-uploader"
+    key: s3-downloader
+    plugins:
+      - staticfloat/cryptic#v2:
+          variables:
+            - AWS_ACCESS_KEY_ID="U2FsdGVkX18iI1+sKDRwUmGLky2FW8pJmTB4r86lq+rgP/0llR1+cauOVZJh8jDV"
+            - AWS_SECRET_ACCESS_KEY="U2FsdGVkX1/2THgYnSPI7gX3xkQse/GxslI7yhdJKrcHDImsXrTjIdg6Xgoq3OjMhEDtjg+SbH+BwGiSGh2OfQ=="
+    commands: |
+      echo "--- buildkite-agent artifact search"
+      buildkite-agent artifact search date.txt
+
+      echo "--- buildkite-agent artifact download"
+      buildkite-agent artifact download date.txt . --step s3-uploader
+
+      cat date.txt
+    env:
+      BUILDKITE_ARTIFACT_UPLOAD_DESTINATION: "s3://julialang-s3-tests/buildkite-testing/shared_s3_location"
+      BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET: ${BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET?}
+    agents:
+      queue: "juliaecosystem"
+      os: "linux"

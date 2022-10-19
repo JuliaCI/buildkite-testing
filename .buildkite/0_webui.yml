@@ -1,21 +1,21 @@
-# Only run on agents that are using sandbox.jl
-agents:
-  queue: "julia"
-  sandbox.jl: "true"
-
 # NOTE: This `0_webui.yml` file is saved in the WebUI, reproduced here only for illustrative purposes
 steps:
   # In the WebUI, the `cryptic` launch job _must_ be the first job to run
-  - label: ":unlocked: demonstrate secrets"
+  - label: ":unlock: demonstrate secrets"
     plugins:
-      - staticfloat/cryptic:
+      - staticfloat/cryptic#v2:
           files:
             - ".buildkite/secrets/codesign_key.txt"
+          signed_pipelines:
+            - pipeline: .buildkite/s3_upload.yml
+              signature_file: .buildkite/s3_upload.yml.signature
+          unsigned_pipelines:
+            - ".buildkite/sandbox_test.yml"
     commands: |
       # Show that we can print out unencrypted secrets
       echo -n "unlocked codesign_key.txt: "
       cat .buildkite/secrets/codesign_key.txt
-
-  # Launch another pipeline that we don't have to manage within the WebUI (but that doesn't have access to secrets)
-  - label: ":rocket: launch pipeline"
-    commands: buildkite-agent pipeline upload
+    agents:
+      queue: "juliaecosystem"
+      cryptic_capable: "true"
+      os: "linux"

@@ -1,11 +1,6 @@
-# Only run on agents that are using sandbox.jl
-agents:
-  queue: "julia"
-  sandbox.jl: "true"
-
 steps:
   # Let's launch a job within a sandbox!
-  - label: "run code within a sandbox"
+  - label: ":linux: sandbox demonstration"
     plugins:
       # Install Julia v1.6 to run Sandbox.jl
       - JuliaCI/julia#v1:
@@ -18,7 +13,13 @@ steps:
             - "/cache:/cache"
       # Once inside the sandbox, install a different version of Julia to prove that we can!
       - JuliaCI/julia#v1:
-          version: 1.5
+          version: 1
           update_registry: false
       # Run tests
       - JuliaCI/julia-test#v1: ~
+    # Only run on agents that are using sandbox.jl
+    agents:
+      queue: "juliaecosystem"
+      sandbox_capable: "true"
+      os: "linux"
+      arch: "x86_64"
