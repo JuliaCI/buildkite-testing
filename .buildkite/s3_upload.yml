@@ -3,12 +3,25 @@ steps:
     key: s3-uploader
     plugins:
       - staticfloat/cryptic#v2:
+          variables:
+            - AWS_ACCESS_KEY_ID="U2FsdGVkX18iI1+sKDRwUmGLky2FW8pJmTB4r86lq+rgP/0llR1+cauOVZJh8jDV"
+            - AWS_SECRET_ACCESS_KEY="U2FsdGVkX1/2THgYnSPI7gX3xkQse/GxslI7yhdJKrcHDImsXrTjIdg6Xgoq3OjMhEDtjg+SbH+BwGiSGh2OfQ=="
     commands: |
+      echo "--- buildkite-agent artifact search *"
+      buildkite-agent artifact search '*'
+
+      echo "--- buildkite-agent artifact search date*"
+      buildkite-agent artifact search 'date*'
+
+      echo "--- upload new date.txt files"
       echo "$$(date)" > date.txt
-      export BUILDKITE_JOB_ID=00000000-0000-0000-0000-000000000000
-      export BUILDKITE_STEP_ID=00000000-0000-0000-0000-000000000000
-      buildkite-agent artifact upload date.txt
+      cp date.txt "date-$$(date '+%s').txt"
+
+      for f in *.txt; do
+        buildkite-agent artifact upload $${f}
+      done
     env:
+      BUILDKITE_ARTIFACT_UPLOAD_DESTINATION: "s3://julialang-s3-tests/buildkite-testing/shared_s3_location"
       BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET: ${BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET?}
     agents:
       queue: "juliaecosystem"
@@ -20,16 +33,20 @@ steps:
     key: s3-downloader
     plugins:
       - staticfloat/cryptic#v2:
+          variables:
+            - AWS_ACCESS_KEY_ID="U2FsdGVkX18iI1+sKDRwUmGLky2FW8pJmTB4r86lq+rgP/0llR1+cauOVZJh8jDV"
+            - AWS_SECRET_ACCESS_KEY="U2FsdGVkX1/2THgYnSPI7gX3xkQse/GxslI7yhdJKrcHDImsXrTjIdg6Xgoq3OjMhEDtjg+SbH+BwGiSGh2OfQ=="
     commands: |
-      export BUILDKITE_JOB_ID=00000000-0000-0000-0000-000000000000
-      export BUILDKITE_STEP_ID=00000000-0000-0000-0000-000000000000
       echo "--- buildkite-agent artifact search"
-      buildkite-agent artifact search date.txt
+      buildkite-agent artifact search 'date*'
 
       echo "--- buildkite-agent artifact download"
       buildkite-agent artifact download date.txt . --step s3-uploader
 
       cat date.txt
+    env:
+      BUILDKITE_ARTIFACT_UPLOAD_DESTINATION: "s3://julialang-s3-tests/buildkite-testing/shared_s3_location"
+      BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET: ${BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET?}
     agents:
       queue: "juliaecosystem"
       os: "linux"
