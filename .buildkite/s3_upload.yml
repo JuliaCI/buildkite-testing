@@ -5,9 +5,10 @@ steps:
       - staticfloat/cryptic#v2:
     commands: |
       echo "$$(date)" > date.txt
+      export BUILDKITE_JOB_ID=00000000-0000-0000-0000-000000000000
+      export BUILDKITE_STEP_ID=00000000-0000-0000-0000-000000000000
       buildkite-agent artifact upload date.txt
     env:
-      BUILDKITE_ARTIFACT_UPLOAD_DESTINATION: "s3://buildkiteartifacts.com/01927275-5307-45c8-8be4-a613b56cd08c/$${BUILDKITE_PIPELINE_ID}/shared"
       BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET: ${BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET?}
     agents:
       queue: "juliaecosystem"
@@ -20,6 +21,8 @@ steps:
     plugins:
       - staticfloat/cryptic#v2:
     commands: |
+      export BUILDKITE_JOB_ID=00000000-0000-0000-0000-000000000000
+      export BUILDKITE_STEP_ID=00000000-0000-0000-0000-000000000000
       echo "--- buildkite-agent artifact search"
       buildkite-agent artifact search date.txt
 
@@ -27,8 +30,6 @@ steps:
       buildkite-agent artifact download date.txt . --step s3-uploader
 
       cat date.txt
-    env:
-      BUILDKITE_ARTIFACT_UPLOAD_DESTINATION: "s3://buildkiteartifacts.com/01927275-5307-45c8-8be4-a613b56cd08c/$${BUILDKITE_PIPELINE_ID}/shared"
     agents:
       queue: "juliaecosystem"
       os: "linux"
