@@ -8,10 +8,13 @@ steps:
             - AWS_SECRET_ACCESS_KEY="U2FsdGVkX1/2THgYnSPI7gX3xkQse/GxslI7yhdJKrcHDImsXrTjIdg6Xgoq3OjMhEDtjg+SbH+BwGiSGh2OfQ=="
     commands: |
       echo "--- buildkite-agent artifact search *"
-      buildkite-agent artifact search '*'
+      buildkite-agent artifact search '*' || true
 
       echo "--- buildkite-agent artifact search date*"
-      buildkite-agent artifact search 'date*'
+      buildkite-agent artifact search 'date*' || true
+
+      echo "--- buildkite-agent artifact download date.txt"
+      buildkite-agent artifact download date.txt . || true
 
       echo "--- upload new date.txt files"
       echo "$$(date)" > date.txt
