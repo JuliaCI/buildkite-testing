@@ -26,6 +26,10 @@ steps:
     env:
       BUILDKITE_ARTIFACT_UPLOAD_DESTINATION: "s3://julialang-s3-tests/buildkite-testing/shared_s3_location"
       BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET: ${BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET?}
+    artifacts:
+      - "date*.txt"
+      - Project.toml
+      - src/**.jl
     agents:
       queue: "juliaecosystem"
       os: "linux"
